@@ -1,0 +1,15 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Age Calculator - Free Online Tool | QuickTools</title><meta name="description" content="Find your exact age in years, months and days, and the days until your next birthday."><link rel="canonical" href="https://tools.2pm.info/tools/age-calculator.html"><link rel="stylesheet" href="/style.css"><!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8592850250675703" crossorigin="anonymous"></script> --></head><body><header><div class="w"><a class="brand" href="/">QuickTools</a><a href="/">Tools</a><a href="/about.html">About</a><a href="/contact.html">Contact</a></div></header><main><h1>Age Calculator</h1><p>Find your exact age in years, months and days, and the days until your next birthday.</p><div class="card"><p><label>Date of birth<input id="dob" type="date"></label></p><div class="stats" id="out"></div></div><div class="card"><h2>How age is calculated</h2><p>Your age is the number of full years, then full months, then remaining days between your date of birth and today. When the day of the month hasn't been reached yet, a month is borrowed from the month before, which is why results can differ by a day from simple "divide by 365" estimates.</p>
+<h2>Leap years</h2><p>Total days lived uses real calendar days, so leap days are included. People born on 29 February celebrate on 28 February or 1 March in non-leap years, depending on local custom and law. This tool counts the next birthday on 1 March.</p>
+<h2>Privacy</h2><p>The date you enter stays in your browser and is never sent to a server.</p></div><script>const $=id=>document.getElementById(id);
+function run(){const v=$('dob').value;if(!v){$('out').innerHTML='';return;}
+const b=new Date(v+'T00:00:00'),t=new Date();const today=new Date(t.getFullYear(),t.getMonth(),t.getDate());
+if(b>today){$('out').innerHTML='<div><b>-</b><span>Date is in the future</span></div>';return;}
+let y=today.getFullYear()-b.getFullYear(),m=today.getMonth()-b.getMonth(),d=today.getDate()-b.getDate();
+if(d<0){m--;d+=new Date(today.getFullYear(),today.getMonth(),0).getDate();}
+if(m<0){y--;m+=12;}
+const days=Math.floor((today-b)/86400000);
+let nb=new Date(today.getFullYear(),b.getMonth(),b.getDate());if(nb<today)nb=new Date(today.getFullYear()+1,b.getMonth(),b.getDate());
+const left=Math.round((nb-today)/86400000);
+$('out').innerHTML=[['Years',y],['Months',m],['Days',d],['Total days lived',days.toLocaleString()],['Days to next birthday',left]].map(([a,c])=>'<div><b>'+c+'</b><span>'+a+'</span></div>').join('');}
+$('dob').addEventListener('input',run);</script></main><footer><div class="w"><a href="/about.html">About</a><a href="/privacy.html">Privacy Policy</a><a href="/contact.html">Contact</a><p>&copy; 2026 QuickTools. Free online tools that run in your browser.</p></div></footer></body></html>

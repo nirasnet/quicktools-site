@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://tools.2pm.info/sitemap.xml
