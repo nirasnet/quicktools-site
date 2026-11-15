@@ -51,3 +51,92 @@ window.QT = {
   },
   hex: (r, g, b) => '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('')
 };
+
+// ---- ZIP (store, no compression) -------------------------------------------------------------
+QT.zip = function (files) {
+  const enc = new TextEncoder();
+  const T = new Uint32Array(256);
+  for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; T[n] = c >>> 0; }
+  const crc = d => { let c = 0xFFFFFFFF; for (let i = 0; i < d.length; i++) c = T[(c ^ d[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; };
+  const now = new Date();
+  const dt = ((now.getHours() << 11) | (now.getMinutes() << 5) | (now.getSeconds() >> 1)) & 0xFFFF;
+  const dd = (((now.getFullYear() - 1980) << 9) | ((now.getMonth() + 1) << 5) | now.getDate()) & 0xFFFF;
+  const parts = [], central = []; let off = 0;
+  files.forEach(f => {
+    const nm = enc.encode(f.name), d = f.data, c = crc(d);
+    const lh = new DataView(new ArrayBuffer(30));
+    lh.setUint32(0, 0x04034b50, true); lh.setUint16(4, 20, true); lh.setUint16(6, 0x0800, true); lh.setUint16(8, 0, true);
+    lh.setUint16(10, dt, true); lh.setUint16(12, dd, true); lh.setUint32(14, c, true); lh.setUint32(18, d.length, true); lh.setUint32(22, d.length, true);
+    lh.setUint16(26, nm.length, true); lh.setUint16(28, 0, true);
+    parts.push(lh.buffer, nm, d);
+    const ch = new DataView(new ArrayBuffer(46));
+    ch.setUint32(0, 0x02014b50, true); ch.setUint16(4, 20, true); ch.setUint16(6, 20, true); ch.setUint16(8, 0x0800, true); ch.setUint16(10, 0, true);
+    ch.setUint16(12, dt, true); ch.setUint16(14, dd, true); ch.setUint32(16, c, true); ch.setUint32(20, d.length, true); ch.setUint32(24, d.length, true);
+    ch.setUint16(28, nm.length, true); ch.setUint32(42, off, true);
+    central.push(ch.buffer, nm);
+    off += 30 + nm.length + d.length;
+  });
+  let cs = 0; central.forEach(p => cs += p.byteLength);
+  const end = new DataView(new ArrayBuffer(22));
+  end.setUint32(0, 0x06054b50, true); end.setUint16(8, files.length, true); end.setUint16(10, files.length, true); end.setUint32(12, cs, true); end.setUint32(16, off, true);
+  return new Blob(parts.concat(central, [end.buffer]), { type: 'application/zip' });
+};
+
+// ---- small toast -------------------------------------------------------------------------------
+QT.toast = function (msg) {
+  let t = document.getElementById('qt-toast');
+  if (!t) { t = document.createElement('div'); t.id = 'qt-toast'; t.setAttribute('role', 'status'); document.body.appendChild(t); }
+  t.textContent = msg; t.className = 'show';
+  clearTimeout(QT._tt); QT._tt = setTimeout(() => { t.className = ''; }, 2200);
+};
+QT.copy = function (text, msg) {
+  const done = () => QT.toast(msg || 'Copied');
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, done); else done();
+};
+QT.safeName = (s, d) => (String(s || '').replace(/[^\w\- .()]+/g, '').trim().replace(/\.(pdf|png|jpe?g|webp|zip)$/i, '') || d);
+QT.range = function (s, n, allIfEmpty) {
+  s = String(s || '').trim();
+  if (!s) { if (allIfEmpty) return Array.from({ length: n }, (_, i) => i); throw new Error('Enter the pages you want'); }
+  const set = [];
+  for (const part of s.split(',')) {
+    const t = part.trim(); if (!t) continue;
+    let m = t.match(/^(\d+)$/);
+    if (m) set.push(+m[1]);
+    else {
+      m = t.match(/^(\d*)\s*-\s*(\d*)$/);
+      if (!m) throw new Error('Cannot read "' + t + '"');
+      const a = m[1] ? +m[1] : 1, b = m[2] ? +m[2] : n;
+      if (a > b) throw new Error('Bad range "' + t + '"');
+      for (let i = a; i <= b; i++) set.push(i);
+    }
+  }
+  if (!set.length) throw new Error('Enter the pages you want');
+  if (set.some(p => p < 1 || p > n)) throw new Error('Pages must be between 1 and ' + n);
+  return set.map(p => p - 1);
+};
+
+// ---- remember option choices on this device only (never uploaded) ------------------------------------
+(function () {
+  const els = [].filter.call(document.querySelectorAll('.panel[data-persist] input,.panel[data-persist] select'), el =>
+    el.id && !el.hasAttribute('data-nosave') && (el.tagName === 'SELECT' || ['range', 'number', 'color', 'checkbox'].indexOf(el.type) > -1));
+  if (!els.length) return;
+  const key = 'qt:' + location.pathname; let store = {};
+  try { store = JSON.parse(localStorage.getItem(key) || '{}') || {}; } catch (e) { store = {}; }
+  els.forEach(el => {
+    if (!(el.id in store)) return;
+    if (el.type === 'checkbox') el.checked = !!store[el.id];
+    else if (el.tagName === 'SELECT') { if ([].some.call(el.options, o => o.value === store[el.id])) el.value = store[el.id]; }
+    else el.value = store[el.id];
+  });
+  document.addEventListener('input', e => {
+    if (els.indexOf(e.target) < 0) return;
+    store[e.target.id] = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+    try { localStorage.setItem(key, JSON.stringify(store)); } catch (x) {}
+  });
+  QT.sync = () => els.forEach(el => { if (el.id in store) el.dispatchEvent(new Event('input', { bubbles: true })); });
+  const panel = document.querySelector('.panel[data-persist]');
+  const b = document.createElement('button'); b.type = 'button'; b.className = 'mini reset'; b.textContent = '↺ Reset options';
+  b.title = 'Restore default options (settings are remembered on this device only)';
+  b.onclick = () => { try { localStorage.removeItem(key); } catch (e) {} location.reload(); };
+  panel.insertBefore(b, panel.firstChild);
+})();
