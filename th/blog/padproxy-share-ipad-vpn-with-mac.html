@@ -1,0 +1,86 @@
+<!doctype html><html lang="th" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'"><title>VPN ที่ทำงานอยู่บน iPad ผมเลยทำให้ iPad เป็น proxy ให้ Mac | QuickTools</title><meta name="description" content="เรื่องของ PadProxy แอปที่เปลี่ยน iPad หรือ iPhone ให้เป็น proxy เพื่อให้ Mac ใช้เครือข่าย VPN ผ่านมาได้ พร้อม prompt คำสั่ง ssh และสิ่งที่พลาด"><link rel="canonical" href="https://2pm.info/th/blog/padproxy-share-ipad-vpn-with-mac.html"><link rel="alternate" hreflang="en" href="https://2pm.info/blog/padproxy-share-ipad-vpn-with-mac.html"><link rel="alternate" hreflang="th" href="https://2pm.info/th/blog/padproxy-share-ipad-vpn-with-mac.html"><link rel="alternate" hreflang="x-default" href="https://2pm.info/blog/padproxy-share-ipad-vpn-with-mac.html"><meta name="theme-color" content="#6d5dfc">
+<meta property="og:type" content="website"><meta property="og:site_name" content="QuickTools"><meta property="og:title" content="VPN ที่ทำงานอยู่บน iPad ผมเลยทำให้ iPad เป็น proxy ให้ Mac | QuickTools"><meta property="og:description" content="เรื่องของ PadProxy แอปที่เปลี่ยน iPad หรือ iPhone ให้เป็น proxy เพื่อให้ Mac ใช้เครือข่าย VPN ผ่านมาได้ พร้อม prompt คำสั่ง ssh และสิ่งที่พลาด"><meta property="og:url" content="https://2pm.info/th/blog/padproxy-share-ipad-vpn-with-mac.html"><meta name="twitter:card" content="summary">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/style.css"><!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8592850250675703" crossorigin="anonymous"></script> --></head><body><header class="top"><div class="w"><a class="brand" href="/th/"><span class="logo"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></span>QuickTools</a><nav><a href="/th/#guides">คู่มือ</a><a href="/th/blog/">บล็อก</a><a href="/th/#tools">เครื่องมือ</a><a href="/privacy-and-security.html">ความเป็นส่วนตัว</a><a href="/">English</a></nav></div></header><img class="bbanner" src="/img/banner-app-padproxy.jpg" alt="ไอคอน PadProxy กับหน้าจอบน iPhone และ iPad" width="1600" height="560" fetchpriority="high">
+<main class="bpost"><div class="bmeta"><span class="pill c-app">แอป</span><span>23 พ.ย. 2026</span><span>อ่าน 7 นาที</span><span class="bshare"><a class="sh" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2F2pm.info%2Fth%2Fblog%2Fpadproxy-share-ipad-vpn-with-mac.html" rel="noopener" target="_blank" aria-label="แชร์ Facebook"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M13.5 22v-8h2.7l.5-3.2h-3.2V8.7c0-.9.4-1.7 1.8-1.7h1.5V4.2S15.2 4 14 4c-2.6 0-4.2 1.5-4.2 4.3v2.5H7V14h2.8v8z"/></svg></a><button id="copylink" class="sh txt" type="button" data-done="คัดลอกแล้ว">คัดลอกลิงก์</button></span></div>
+<h1>VPN ที่ทำงานอยู่บน iPad ผมเลยทำให้ iPad เป็น proxy ให้ Mac</h1><p class="bdesc">เรื่องของ PadProxy แอปที่เปลี่ยน iPad หรือ iPhone ให้เป็น proxy เพื่อให้ Mac ใช้เครือข่าย VPN ผ่านมาได้ พร้อม prompt คำสั่ง ssh และสิ่งที่พลาด</p>
+<div class="byline"><img class="avatar" src="/img/avatar-9m4ck.jpg" alt="9M4ck" width="44" height="44"><span><b>โดย 9M4ck</b> · มือใหม่</span></div>
+<aside class="bsum"><h2>สิ่งที่คุณจะได้</h2><ul><li>ทำไมต้องให้ iPad เป็นตัวกลางของ Mac</li><li>ข้อห้ามข้อเดียวใน prompt ที่ทำให้ VPN ไม่หลุด</li><li>prompt เต็ม และคำสั่ง ssh ที่ทำให้เทอร์มินัลใช้ proxy ได้</li></ul></aside>
+<nav class="btoc" aria-label="ในหน้านี้"><b>ในหน้านี้</b><a href="#s1">เงื่อนไขที่ผมตั้งไว้ตั้งแต่บรรทัดแรก</a><a href="#s2">บ่ายวันเดียวกัน ติดตั้งลง iPad</a><a href="#s3">เอาไปใช้กับงานจริง และแอปช่วยแก้ปัญหาตัวเอง</a><a href="#s4">จากของใช้เอง ไปเป็นแอปที่ส่งขึ้นสโตร์ได้</a><a href="#s5">prompt ที่ผมใช้จริง</a></nav>
+<article class="bbody"><p>สถานการณ์คือ VPN ของที่ทำงานต่ออยู่บน iPad ของผม แต่เครื่องที่ต้องเข้าเว็บภายในและ server ที่ทำงานคือ MacBook ทางออกที่ผมให้ Claude Code ทำคือให้ iPad เป็นตัวกลาง แล้วให้ Mac วิ่งผ่านมัน</p>
+<p>แอปที่ได้ชื่อ PadProxy มันเปิด proxy เล็กๆ บน iPad ให้ Mac ในเครือข่ายเดียวกันส่งทราฟฟิกผ่านมา ทราฟฟิกก็จะออกไปทาง VPN ที่ iPad ต่ออยู่</p>
+<p class="applinks"><a class="lbtn" href="https://nirasnet.github.io/padproxy-site/" rel="noopener">หน้าเว็บของ PadProxy</a></p>
+<div class="shots2"><figure><img src="/img/app-pad-1.jpg" alt="หน้าจอ PadProxy บน iPhone ขณะรันพร็อกซี" loading="lazy" decoding="async"><figcaption>PadProxy บน iPhone แสดงที่อยู่ให้คัดลอก</figcaption></figure><figure><img src="/img/app-pad-2.jpg" alt="PadProxy บน iPad พร้อมขั้นตอนตั้งค่า Mac" loading="lazy" decoding="async"><figcaption>บน iPad มีขั้นตอนตั้งค่า Mac อยู่ข้างๆ</figcaption></figure></div>
+<div class="callout note"><b>สถานะ</b> ตอนที่เขียนบทความนี้ ผมยังไม่เห็น PadProxy ในหน้า App Store จึงยังไม่ใส่ลิงก์ดาวน์โหลด มีหน้าเว็บของแอปให้ดูก่อน ถ้าขึ้นสโตร์แล้วจะกลับมาเพิ่มลิงก์ที่นี่</div>
+<h2 id="s1">เงื่อนไขที่ผมตั้งไว้ตั้งแต่บรรทัดแรก</h2>
+<p>prompt ยาวๆ ภาษาอังกฤษที่ผมให้ Claude Code ครั้งเดียว (ผมวางมา ไม่ได้พิมพ์สดทั้งหมด) ข้อที่สำคัญที่สุดคือห้ามใช้ NetworkExtension หรือ API ของ VPN เพราะถ้าแอปไปยุ่งกับระบบ VPN มันอาจตัดการเชื่อมต่อที่ที่ทำงานของผมทิ้ง ผมให้มันเขียนเป็นแค่ socket server ธรรมดาที่รับการเชื่อมต่อจากเครื่องอื่นในวงเดียวกัน ใช้ Network.framework ของ Apple ไม่พึ่งไลบรารีข้างนอก และรองรับ CONNECT เพื่อให้ HTTPS ผ่านได้</p>
+<p>จุดที่ผมว่าน่าสนใจคือ prompt บอกเหตุผลของข้อห้ามด้วย ไม่ใช่แค่ห้ามเฉยๆ คือ "ห้ามเพราะต้องอยู่ร่วมกับ VPN ที่กำลังต่ออยู่" การบอกเหตุผลแบบนี้ช่วยให้ AI เลือกทางอื่นในแอปได้สอดคล้องกัน</p>
+<h2 id="s2">บ่ายวันเดียวกัน ติดตั้งลง iPad</h2>
+<p>ผมสั่งสั้นๆ ว่า "deploy to my ipad" ลองต่อ Mac เข้าไป เว็บเบราว์เซอร์ใช้ได้ แต่คำสั่ง <code>ssh</code> ในเทอร์มินัลยังเข้า server ที่ทำงานไม่ได้ ปรากฏว่าเทอร์มินัลไม่สนการตั้งค่า proxy ของระบบ macOS มันพยายามต่อตรงผ่านเน็ตบ้าน ต้องบอก ssh เองให้ใช้ proxy ผ่าน ProxyCommand:</p>
+<div class="promptbox"><button type="button" data-done="คัดลอกแล้ว">คัดลอก</button><pre>ssh -o "ProxyCommand nc -X connect -x [ip-ของ-ipad]:8080 %h %p" [user]@[server]</pre></div>
+<p>พอใส่แบบนี้ก็ต่อได้ ผมสั่งต่อว่า "ok it work now deploy it to my iphone17 pro also" เพื่อให้ใช้บน iPhone ได้ด้วย</p>
+<h2 id="s3">เอาไปใช้กับงานจริง และแอปช่วยแก้ปัญหาตัวเอง</h2>
+<p>อีกสองวันต่อมา ผมเปิดหน้าเว็บภายในบน server ที่ทำงานไม่ได้ เลยลองให้ Claude ssh เข้าไปดูเองผ่านแอปนี้ เจอว่าไฟร์วอลล์ของ server ไม่ให้ช่วง IP ของ VPN เข้าบางพอร์ต มันเพิ่มกฎอนุญาตให้ครบห้าพอร์ต แล้วหน้าเว็บก็เปิดได้ ผมชอบตรงที่เครื่องมือที่ AI สร้าง ถูกใช้แก้งานจริงโดย AI ตัวเดียวกัน (ผมไม่ได้ใส่รหัสผ่านของ server ไว้ในบทความ และถ้าทำใหม่ ควรใช้ ssh key แทนการให้รหัสผ่านในคำสั่ง)</p>
+<h2 id="s4">จากของใช้เอง ไปเป็นแอปที่ส่งขึ้นสโตร์ได้</h2>
+<p>วันที่ 21 ตุลาคม ผมให้เก็บให้พร้อมส่งสโตร์: ไอคอน ปุ่ม tip jar (ผู้ใช้อยากให้กาแฟได้ในราคา $0.99, $4.99 หรือ $9.99 โดยไม่ปลดล็อกอะไรเพิ่ม) รองรับ iPhone ด้วย และเก็บการเล่นเสียงเงียบๆ ที่เอาไว้กัน iOS หยุดแอปตอนอยู่หลังฉาก ไว้เฉพาะบิลด์ตอน debug ส่วนบิลด์สำหรับสโตร์ไม่มีส่วนนี้</p>
+<p>สองวันต่อมาผมเพิ่มแอปคู่หูบน Mac ชื่อ PadProxyMac เป็นไอคอนบนแถบเมนู iPad จะประกาศตัวเองผ่าน Bonjour ให้ Mac หาเจอเอง และกดเปิดปิด proxy ของระบบ macOS ได้ในคลิกเดียว จะได้ไม่ต้องไปตั้งค่าในหน้า System Settings ทุกครั้ง</p>
+<div class="callout note"><b>ทำด้วย AI</b> โค้ดเขียนโดย Claude Code ผมเป็นคนกำหนดเงื่อนไข ทดสอบกับ VPN และ server จริง และตัดสินใจว่าจะเก็บอะไรไว้</div>
+<h2 id="s5">prompt ที่ผมใช้จริง</h2>
+<p>อันแรกคือ prompt ภาษาอังกฤษยาวที่ผมวางทั้งก้อน (ผมไม่ตัด เพราะแต่ละข้อมีเหตุผลของมัน) ใช้ได้เลยถ้าคุณมีสถานการณ์คล้ายกัน ข้อสุดท้ายในนั้นพูดถึงการตั้งค่า Info.plist ซึ่งจำเป็น ไม่งั้นแอปจะรับการเชื่อมต่อจาก Mac ไม่ได้</p>
+<h3>1. prompt ตั้งต้น (20 ต.ค.)</h3>
+<div class="promptbox"><button type="button" data-done="คัดลอกแล้ว">คัดลอก</button><pre>You are an expert iOS/iPadOS developer. Build a complete, production-ready native iPadOS app in Swift and SwiftUI that acts as a local HTTP and HTTPS (CONNECT) proxy server.
+
+### Critical Architecture Constraints
+1. DO NOT use NetworkExtension, NEPacketTunnelProvider, or any VPN APIs. The app must run strictly as a user-space socket server so that it can run concurrently alongside an active GlobalProtect VPN tunnel without terminating it.
+2. Use Apple's native `Network.framework` (`NWListener` and `NWConnection`) without third-party dependencies.
+3. Support HTTP proxy requests and the HTTP `CONNECT` method (essential for tunneling HTTPS / SSL traffic between the client and destination).
+
+### Requirements
+
+#### 1. Core Proxy Engine (Network.framework)
+- Implement a `ProxyServer` class using `NWListener` listening on `0.0.0.0` (default port `8080`, configurable).
+- When an incoming connection arrives from the LAN (MacBook):
+  - Read the HTTP request header.
+  - If the method is `CONNECT host:port HTTP/1.1`:
+    - Establish an outbound `NWConnection` to the target `host:port`.
+    - Once connected, send `HTTP/1.1 200 Connection Established\r\n\r\n` back to the client.
+    - Enter bidirectional raw TCP streaming (forward bytes from client to target, and target to client) until either side closes.
+  - If the method is standard HTTP (`GET`, `POST`, etc.):
+    - Parse the absolute URI from the request line, establish the outbound connection, forward the original request, and stream the response back.
+- Implement robust error handling, socket teardown, and cancellation when connections drop.
+
+#### 2. Local IP Address Detection
+- Provide a utility to query the active network interface (`en0` / Wi-Fi or `pdp_ip0` / Hotspot) using `getifaddrs` in Swift to display the iPad's current local IPv4 address (e.g., `192.168.1.X` or `172.20.10.1`).
+
+#### 3. SwiftUI Interface
+- Clean, iPad-friendly dashboard showing:
+  - Server Status (Running / Stopped indicator with an animated badge).
+  - iPad Local IP address (with a "Copy" button).
+  - Port input field (default `8080`).
+  - Big Start / Stop toggle button.
+  - Active Connections Counter and live connection log view (method, host, status).
+  - Clear instructions block showing the user what to type into their MacBook Proxy Settings.
+
+#### 4. Background &amp; Permissions Configuration
+- Specify all required entries for `Info.plist`:
+  - `NSLocalNetworkUsageDescription` (required by iOS 14+ to accept incoming connections over Wi-Fi).
+  - Background Execution capabilities (e.g., Audio keepalive or idle-timer disabling via `UIApplication.shared.isIdleTimerDisabled = true`) to prevent iOS from suspending the socket server while running in the background.
+
+Please provide the complete, compilable Swift code organized cleanly into classes, and explain how to set it up in Xcode.</pre></div>
+<h3>2. ลงเครื่อง</h3>
+<div class="promptbox"><button type="button" data-done="คัดลอกแล้ว">คัดลอก</button><pre>deploy to my ipad</pre></div>
+<h3>3. ใช้งานได้แล้ว ลงอีกเครื่อง</h3>
+<div class="promptbox"><button type="button" data-done="คัดลอกแล้ว">คัดลอก</button><pre>ok it work now deploy it to my iphone17 pro also</pre></div>
+<h3>4. ให้ AI แก้ปัญหาบน server ผ่าน proxy นี้ (22 ต.ค.)</h3>
+<div class="promptbox"><button type="button" data-done="คัดลอกแล้ว">คัดลอก</button><pre>why i cannot open web http://[server-ip]:9000/[path]
+how to fix it you can ssh to check config on this server by ssh -o "ProxyCommand nc -X connect -x [ip-ของ-ipad]:8080 %h %p" [user]@[server-ip]</pre></div>
+<div class="callout tip"><b>ข้อที่อยากฝาก</b> prompt ที่ขึ้นต้นด้วยบทบาทแล้วตามด้วยข้อห้ามและเหตุผล ใช้ได้กับงานอื่นด้วย ลองเขียนข้อห้ามกับเหตุผลของมันสองสามข้อ แล้วดูว่า AI ตัดสินใจเรื่องอื่นเองได้ดีขึ้นแค่ไหน</div></article>
+<section class="author"><img class="avatar big" src="/img/avatar-9m4ck.jpg" alt="9M4ck" width="88" height="88" loading="lazy"><div><h2>เกี่ยวกับผู้เขียน</h2><p>สวัสดีครับ ผม <b>9M4ck</b> เป็นคุณพ่อที่ชอบลองของใหม่ โดยเฉพาะ AI ที่แค่พิมพ์บอกเป็นภาษาบ้าน ๆ แล้วมันทำของใช้ได้จริงให้ ผมไม่ได้เขียนโค้ดเอง ผมเปิดเพจ <b>จับมือ AI</b> เพราะเพื่อน ๆ ทักมาขอให้จับมือทำของที่ผมทำที่บ้าน เช่นทีวีของครอบครัว</p><p>ภาพถ่ายและภาพหน้าจอในบทความมาจากทีวี โทรศัพท์ และโปรเจกต์ของผมเอง ส่วนคลิปและเสียงบรรยายบน Facebook ทำด้วยเครื่องมือ AI บล็อกนี้เรียบเรียงขั้นตอนที่เป็นตัวหนังสือจากโพสต์ของผม ให้ทำตามได้ตามจังหวะของคุณ</p><p class="soc">ติดตามได้ที่: <a href="https://www.facebook.com/profile.php?id=61596056038143" rel="noopener">Facebook</a> · <a href="https://www.youtube.com/@jabmueai" rel="noopener">YouTube</a> · <a href="https://www.tiktok.com/@jabmue.ai" rel="noopener">TikTok</a></p></div></section>
+<h2 class="morehd">อ่านต่อ</h2><nav class="bnext"><a class="bn" href="/th/blog/kapuklook-thai-spending-app-built-with-ai.html"><img src="/img/banner-app-kapuklook.jpg" alt="" loading="lazy" width="1600" height="560"><span><small>ก่อนหน้า</small><b>สั่ง AI ให้ทำแอปดูรายจ่าย จนขึ้น App Store: เรื่องจริงของ Kapuklook</b></span></a><a class="bn" href="/th/blog/mssh-ssh-client-for-iphone-built-with-ai.html"><img src="/img/banner-app-mssh.jpg" alt="" loading="lazy" width="1600" height="560"><span><small>ถัดไป</small><b>ทำแอป SSH บนมือถือด้วย AI แล้วพิมพ์ไทยแล้วค้าง: เรื่องจริงของ mSSH</b></span></a></nav></main><button id="themebtn" class="themebtn" type="button" aria-label="สลับธีมสว่างหรือมืด" title="สลับธีมสว่างหรือมืด"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z" fill="currentColor"/></svg></button><script>(function(){var d=document,r=d.documentElement,K='qt-theme';try{var v=localStorage.getItem(K);if(v==='light'||v==='dark')r.setAttribute('data-theme',v)}catch(e){}
+var t=d.getElementById('themebtn');if(t)t.addEventListener('click',function(){var n=r.getAttribute('data-theme')==='light'?'dark':'light';r.setAttribute('data-theme',n);try{localStorage.setItem(K,n)}catch(e){}});
+function cp(txt,b){var o=b.textContent,done=function(){b.textContent=b.getAttribute('data-done');setTimeout(function(){b.textContent=o},1800)};if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,done)}else{done()}}
+d.querySelectorAll('.promptbox button').forEach(function(b){b.addEventListener('click',function(){cp(b.parentNode.querySelector('pre').innerText,b)})});
+d.querySelectorAll('.bfilter button').forEach(function(b){b.addEventListener('click',function(){var f=b.getAttribute('data-f');d.querySelectorAll('.bfilter button').forEach(function(x){x.classList.toggle('on',x===b)});d.querySelectorAll('.bgrid .bc').forEach(function(c){var show=f==='all'||c.getAttribute('data-cat')===f;c.style.display=show?'':'none';c.classList.remove('big');});var first=[].filter.call(d.querySelectorAll('.bgrid .bc'),function(c){return c.style.display!=='none'})[0];if(first&&f==='all')first.classList.add('big');})});
+var cl=d.getElementById('copylink');if(cl)cl.addEventListener('click',function(){cp(location.href,cl)});})();</script><footer class="bot"><div class="w"><div class="fcols"><div><a class="brand" href="/" style="color:#fff"><span class="logo"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></span>QuickTools</a><p>Free tools for documents, images and crafts. Everything runs in your browser and is never processed on our servers, so your files stay on your device.</p></div>
+<div><h4>PDF Tools</h4><a href="/tools/images-to-pdf.html">Images to PDF</a><a href="/tools/merge-pdf.html">Merge PDF</a><a href="/tools/split-pdf.html">Split & Extract PDF Pages</a><a href="/tools/rotate-pdf.html">Rotate PDF Pages</a><a href="/tools/pdf-watermark.html">Add Watermark to PDF</a></div><div><h4>Image Tools</h4><a href="/tools/image-compressor.html">Image Compressor, Resizer & Converter</a><a href="/tools/qr-code-generator.html">QR Code Generator</a><a href="/tools/wifi-qr-code.html">Wi-Fi QR Code Generator</a></div><div><h4>Craft & Design</h4><a href="/tools/color-palette-extractor.html">Colour Palette from Image</a><a href="/tools/cross-stitch-pattern-maker.html">Pixel & Cross-Stitch Pattern Maker</a><a href="/tools/graph-paper-pdf.html">Printable Graph & Dot Paper</a><a href="/tools/gradient-generator.html">CSS Gradient Generator</a></div></div>
+<div class="copy"><a href="/privacy-and-security.html">How your data stays safe</a> &nbsp;·&nbsp; <a href="/about.html">About</a> &nbsp;·&nbsp; <a href="/privacy.html">Privacy Policy</a> &nbsp;·&nbsp; <a href="/contact.html">Contact</a><br>&copy; 2026 QuickTools. Free online tools that run in your browser.</div></div></footer></body></html>
